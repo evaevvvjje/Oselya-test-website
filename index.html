@@ -17,9 +17,9 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
 
-  <link rel="preload" as="image" href="assets/images/hero-bg.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/images/hero-man.webp" fetchpriority="high">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -49,7 +49,7 @@
           success: 'var(--color-success)',
         },
         fontFamily: {
-          display: ['Unbounded', '"Arial Black"', 'sans-serif'],
+          display: ['Oswald', '"Arial Narrow"', 'Arial', 'sans-serif'],
           body: ['Onest', 'Arial', 'sans-serif'],
         },
         borderRadius: {
@@ -109,24 +109,24 @@
       --color-success: #1E6B52;
 
       /* Fonts */
-      --font-display: "Unbounded", "Arial Black", sans-serif;
+      --font-display: "Oswald", "Arial Narrow", Arial, sans-serif;
       --font-body: "Onest", Arial, sans-serif;
 
       /* Type scale — mobile values (≤991px) */
-      --fs-h1: 2.5rem;
-      --fs-h1-hero: 2.75rem;
-      --fs-h2: 2rem;
-      --fs-h3: 1.625rem;
-      --fs-h4: 1.375rem;
-      --fs-h5: 1.125rem;
-      --fs-h6: 1rem;
+      --fs-h1: 3rem;
+      --fs-h1-hero: 3.25rem;
+      --fs-h2: 2.5rem;
+      --fs-h3: 2rem;
+      --fs-h4: 1.625rem;
+      --fs-h5: 1.25rem;
+      --fs-h6: 1.125rem;
       --fs-text-xl: 1.25rem;
       --fs-text-l: 1.125rem;
       --fs-text-m: 1rem;
       --fs-text-s: 1rem;
       --fs-button: 1rem;
       --fs-label: 0.875rem;
-      --fs-number: 3.5rem;
+      --fs-number: 4rem;
 
       /* Spacing — mobile values */
       --section-pad: 4rem;
@@ -166,17 +166,17 @@
 
     @media (min-width: 992px) {
       :root {
-        --fs-h1: 3.75rem;
-        --fs-h1-hero: 4.5rem;
-        --fs-h2: 2.75rem;
-        --fs-h3: 2rem;
-        --fs-h4: 1.5rem;
-        --fs-h5: 1.25rem;
-        --fs-h6: 1.125rem;
+        --fs-h1: 4.5rem;
+        --fs-h1-hero: 5.5rem;
+        --fs-h2: 3.5rem;
+        --fs-h3: 2.5rem;
+        --fs-h4: 2rem;
+        --fs-h5: 1.5rem;
+        --fs-h6: 1.25rem;
         --fs-text-xl: 1.5rem;
         --fs-text-l: 1.25rem;
         --fs-text-m: 1.125rem;
-        --fs-number: 5rem;
+        --fs-number: 6rem;
 
         --section-pad: 7rem;
         --section-pad-lg: 12rem;
@@ -242,8 +242,8 @@
     .t-h1-hero {
       font-size: var(--fs-h1-hero);
       font-weight: 600;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
     }
     .t-text-l { font-size: var(--fs-text-l); line-height: 1.45; }
     .t-label {
@@ -341,8 +341,8 @@
       gap: 0.625rem;
       font-family: var(--font-display);
       font-weight: 600;
-      font-size: 1.375rem;
-      letter-spacing: -0.03em;
+      font-size: 1.625rem;
+      letter-spacing: -0.01em;
       line-height: 1;
       border-radius: var(--radius-xsmall);
       transition: transform var(--dur-hover) var(--ease), opacity var(--dur-hover) var(--ease);
@@ -457,8 +457,8 @@
       font-family: var(--font-display);
       font-weight: 500;
       font-size: var(--fs-h4);
-      line-height: 1.2;
-      letter-spacing: -0.01em;
+      line-height: 1.15;
+      letter-spacing: 0;
       transition: opacity var(--dur-hover) var(--ease), transform var(--dur-hover) var(--ease);
     }
     .mobile-nav a svg { color: var(--color-accent-soft); transition: transform var(--dur-hover) var(--ease); }
@@ -470,15 +470,21 @@
     .mobile-menu-foot .header-phone { display: inline-flex; font-size: var(--fs-text-l); }
 
     /* ============ Hero (TZ §4.2) ============ */
+    /* Mobile-first: content on top, the figure below it in normal flow, centred.
+       Desktop: content bottom-left, figure absolutely placed on the right. */
     .hero {
+      /* Vertical placement of the man: gap between the header's bottom edge and the top of his hard hat.
+         Raise him with a smaller/negative value, lower him with a larger one. */
+      --hero-man-offset: 0.5rem;
       position: relative;
       isolation: isolate;
       display: flex;
-      align-items: flex-end;
+      flex-direction: column;
+      gap: var(--gap-xlarge);
       min-height: 85vh;
       min-height: 85svh;
-      padding-top: calc(var(--header-h) + var(--gap-xlarge));
-      padding-bottom: var(--gap-xlarge);
+      /* Mobile: leave room for the «ОСЕЛЯ» word between the header and the badge */
+      padding-top: calc(var(--header-h) + var(--gap-xlarge) * 2);
       color: var(--color-text-on-dark);
       background: var(--color-dark);
       overflow: hidden;
@@ -487,30 +493,108 @@
       .hero {
         min-height: max(100vh, 40rem);
         min-height: max(100svh, 40rem);
+        padding-top: calc(var(--header-h) + var(--gap-xlarge));
+      }
+    }
+    /* Side-by-side composition only where the wrapped H1 (≈720px) and the man both fit;
+       992–1279px keeps the stacked layout so the heading never crosses his face. */
+    @media (min-width: 1280px) {
+      .hero {
+        flex-direction: row;
+        align-items: flex-end;
         padding-bottom: var(--gap-xxlarge);
       }
     }
-    .hero-media { position: absolute; inset: 0; z-index: -1; }
-    .hero-media img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      object-position: 62% 50%;
-    }
-    /* Colour treatment: brand dark, multiplied over the photo */
-    .hero-tint {
+
+    /* Layer stack (bottom → top): dark base → accent glow → «ОСЕЛЯ» → grain → man → content */
+    .hero-backdrop {
       position: absolute; inset: 0;
-      background: var(--color-dark);
-      mix-blend-mode: multiply;
-      opacity: .55;
+      z-index: -1;
+      pointer-events: none;
     }
-    /* Darkening for legibility: from-black/60 at the bottom + a soft fall-off behind the copy */
-    .hero-shade {
+    .hero-glow {
       position: absolute; inset: 0;
       background:
-        linear-gradient(to top, rgba(0,0,0,.6) 0%, rgba(0,0,0,.25) 45%, rgba(0,0,0,0) 70%),
-        linear-gradient(to right, rgba(0,0,0,.45) 0%, rgba(0,0,0,.15) 55%, rgba(0,0,0,0) 80%),
-        linear-gradient(to bottom, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 22%);
+        radial-gradient(28% 34% at 50% 80%, rgba(30, 107, 82, .55) 0%, rgba(30, 107, 82, 0) 100%),
+        radial-gradient(60% 42% at 50% 86%, rgba(30, 107, 82, .4) 0%, rgba(30, 107, 82, 0) 100%),
+        radial-gradient(90% 50% at 50% 100%, rgba(30, 107, 82, .22) 0%, rgba(30, 107, 82, 0) 100%);
+      animation: hero-fade 1100ms var(--ease) 80ms both;
     }
+    @media (min-width: 1280px) {
+      .hero-glow {
+        background:
+          radial-gradient(22% 36% at 70% 42%, rgba(30, 107, 82, .55) 0%, rgba(30, 107, 82, 0) 100%),
+          radial-gradient(34% 58% at 71% 58%, rgba(30, 107, 82, .42) 0%, rgba(30, 107, 82, 0) 100%),
+          radial-gradient(52% 85% at 74% 70%, rgba(30, 107, 82, .2) 0%, rgba(30, 107, 82, 0) 100%);
+      }
+    }
+
+    /* Decorative brand word behind the man */
+    .hero-word-wrap {
+      position: absolute;
+      inset: calc(var(--header-h) + var(--gap-xsmall)) 0 auto 0;
+      display: flex;
+      justify-content: center;
+      animation: hero-fade 1100ms var(--ease) 160ms both;
+    }
+    .hero-word {
+      font-family: var(--font-display);
+      font-weight: 600;
+      /* ≈ 80% of the container: in Oswald 600 caps the word is ≈ 2.75em wide, so 0.8 / 2.75 ≈ 0.29 */
+      font-size: calc((min(100vw, var(--container-max)) - 2 * var(--container-pad)) * 0.29);
+      line-height: .9;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      user-select: none;
+      color: transparent;
+      background: linear-gradient(90deg,
+        rgba(255, 255, 255, .06) 0%,
+        rgba(255, 255, 255, .1) 45%,
+        rgba(221, 235, 228, .25) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 96%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 96%);
+    }
+    @media (min-width: 992px) {
+      .hero-word-wrap { top: calc(var(--header-h) + var(--gap-xlarge)); }
+    }
+
+    /* The man: cut-out photo, bottom-aligned, cropped at the waist by the section edge */
+    .hero-figure {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      height: min(31rem, 70svh);
+      margin-top: auto;
+      pointer-events: none;
+      animation: rise 900ms var(--ease) 240ms both;
+    }
+    .hero-man {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      object-position: center bottom;
+    }
+    @media (min-width: 992px) {
+      .hero-figure { height: min(36rem, 72svh); }
+    }
+    @media (min-width: 1280px) {
+      .hero-figure {
+        position: absolute;
+        top: calc(var(--header-h) + var(--hero-man-offset));
+        bottom: 0;
+        right: calc(max(0px, (100% - var(--container-max)) / 2) + var(--container-pad));
+        width: min(46%, 50rem);
+        height: auto;
+        margin-top: 0;
+        justify-content: flex-end;
+      }
+      .hero-man { object-position: right bottom; }
+    }
+    @keyframes hero-fade { from { opacity: 0; } to { opacity: 1; } }
     .grain {
       position: absolute; inset: 0;
       pointer-events: none;
@@ -521,6 +605,7 @@
 
     .hero-content {
       position: relative;
+      z-index: 2;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -540,14 +625,12 @@
       background: var(--color-surface-2);
     }
     .avatar + .avatar { margin-left: -0.75rem; }
+    /* Square face crops (256px / 512px WebP) — no scaling, so they stay sharp */
     .avatar img {
       width: 100%; height: 100%;
       object-fit: cover;
-      transform: scale(2.1);
+      object-position: center 20%;
     }
-    .avatar-1 img { transform-origin: 54% 33%; }
-    .avatar-2 img { transform-origin: 51% 31%; }
-    .avatar-3 img { transform-origin: 52% 29%; }
 
     .hero-badge-text {
       font-size: var(--fs-text-l);
@@ -556,32 +639,30 @@
     }
 
     .hero-title {
-      margin-top: var(--gap-xlarge);
-      max-width: 15.5em;
-      /* TZ §3.3: max 4 lines at 375px — narrow phones scale down from 2.75rem */
-      font-size: min(var(--fs-h1-hero), 9.6vw);
+      margin-top: var(--gap-small);
+      /* TZ §3.3: H1 Hero token (3.25rem mobile / 5.5rem desktop); phones scale so the longest line fits */
+      font-size: min(var(--fs-h1-hero), 11.6vw);
+      text-transform: uppercase;
     }
     @media (min-width: 992px) {
       .hero-title { font-size: var(--fs-h1-hero); }
-      .hero-title-img { width: 1.9em; }
     }
-    .hero-title-lead { white-space: nowrap; }
+    /* Three set lines: [photo] РЕМОНТ, / ЩО ПОВЕРТАЄ / ВІДЧУТТЯ ДОМУ — no orphaned word */
+    .hero-line { display: block; white-space: nowrap; }
     .hero-title-muted { color: var(--color-text-on-dark-muted); }
-    /* Inline photo before the first word — signature detail of the reference */
+    /* Inline photo before the first word: exactly the cap height, sitting on the baseline */
     .hero-title-img {
       display: inline-block;
-      vertical-align: -0.06em;
-      width: 1.6em; height: 0.86em;
-      margin-right: 0.22em;
-      border-radius: var(--radius-xsmall);
+      vertical-align: baseline;
+      width: 1.3em; height: 0.81em;
+      margin-right: 0.18em;
+      border-radius: var(--radius-small);
       overflow: hidden;
       box-shadow: 0 0 0 1px var(--color-border-on-dark), 0 12px 28px -14px rgba(0,0,0,.7);
     }
     .hero-title-img img {
       width: 100%; height: 100%;
       object-fit: cover;
-      transform: scale(3.2);
-      transform-origin: 78% 62%;
     }
 
     .hero-actions {
@@ -593,14 +674,37 @@
     @media (min-width: 480px) {
       .hero-actions { grid-auto-flow: column; grid-auto-columns: max-content; }
     }
-
-    .hero-lead {
-      margin-top: var(--gap-small);
-      max-width: 38rem;
-      color: var(--color-text-on-dark-muted);
+    /* Hero buttons: lift + arrow nudge + one soft glint sweep; pressed state sinks below rest.
+       Only transform and opacity animate. */
+    .hero-actions .btn { transition: transform 320ms var(--ease); }
+    .hero-actions .btn::after {
+      content: "";
+      position: absolute; inset: 0; z-index: -1;
+      border-radius: inherit;
+      background: linear-gradient(105deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, .22) 50%, rgba(255, 255, 255, 0) 70%);
+      opacity: 0;
+      transform: translateX(-110%);
+      pointer-events: none;
     }
+    .hero-actions .btn-secondary::after {
+      background: linear-gradient(105deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, .12) 50%, rgba(255, 255, 255, 0) 70%);
+    }
+    .hero-actions .btn:hover,
+    .hero-actions .btn:focus-visible { transform: translateY(-3px); }
+    .hero-actions .btn:hover::after,
+    .hero-actions .btn:focus-visible::after {
+      opacity: 1;
+      transform: translateX(110%);
+      transition: transform 750ms var(--ease), opacity 200ms var(--ease);
+    }
+    .hero-actions .btn:focus-visible::before { opacity: 1; }
+    .hero-actions .btn .btn-icon { transition: transform 320ms var(--ease); }
+    .hero-actions .btn:hover .btn-icon,
+    .hero-actions .btn:focus-visible .btn-icon { transform: translateX(4px); }
+    .hero-actions .btn:active { transform: translateY(1px) scale(.97); transition-duration: 90ms; }
+    .hero-actions .btn:active .btn-icon { transform: translateX(1px); transition-duration: 90ms; }
 
-    /* Page-load sequence: badge → H1 → buttons → lead */
+    /* Page-load sequence: badge → H1 → buttons */
     @keyframes rise {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -620,13 +724,13 @@
       font-size: var(--fs-h2);
       font-weight: 600;
       line-height: 1.1;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
     }
     .t-h6 {
       font-family: var(--font-display);
       font-size: var(--fs-h6);
       font-weight: 500;
-      line-height: 1.3;
+      line-height: 1.25;
     }
     .t-text-m { font-size: var(--fs-text-m); line-height: 1.5; }
     .text-accent { color: var(--color-accent); }
@@ -698,7 +802,7 @@
       font-family: var(--font-display);
       font-size: var(--fs-h6);
       font-weight: 500;
-      line-height: 1.3;
+      line-height: 1.25;
       color: var(--color-text-muted);
       border-radius: 0.25rem;
       transition: transform var(--dur-hover) var(--ease), opacity var(--dur-hover) var(--ease);
@@ -881,11 +985,11 @@
     .stat-num {
       display: flex;
       font-family: var(--font-display);
-      /* TZ 3.5rem on mobile; narrow phones scale so 500+ fits half the row */
-      font-size: min(var(--fs-number), 10.5vw);
+      /* TZ §3.3: 4rem mobile / 6rem desktop */
+      font-size: var(--fs-number);
       font-weight: 600;
       line-height: 1;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--color-text);
       white-space: nowrap;
     }
@@ -935,7 +1039,7 @@
       color: var(--color-accent);
     }
     .why-body { margin-top: auto; }
-    .t-h5 { font-family: var(--font-display); font-size: var(--fs-h5); font-weight: 500; line-height: 1.25; }
+    .t-h5 { font-family: var(--font-display); font-size: var(--fs-h5); font-weight: 500; line-height: 1.2; }
     .why-text { margin-top: 0.5rem; color: var(--color-text-muted); }
     .why-photo { border-radius: var(--radius-small); aspect-ratio: 4 / 3; }
     .why-photo-team img { object-position: 30% 50%; }
@@ -1004,10 +1108,10 @@
       font-size: var(--fs-h3);
       font-weight: 600;
       line-height: 1;
-      letter-spacing: -0.02em;
+      letter-spacing: 0;
       color: var(--color-accent);
     }
-    .t-h4 { font-family: var(--font-display); font-size: var(--fs-h4); font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; }
+    .t-h4 { font-family: var(--font-display); font-size: var(--fs-h4); font-weight: 500; line-height: 1.15; letter-spacing: 0; }
     .project-text { margin-top: 0.5rem; color: var(--color-text-muted); }
     .project-meta { display: flex; flex-direction: column; gap: 0.5rem; color: var(--color-text-muted); }
     .project-meta li { display: flex; align-items: center; gap: 0.5rem; }
@@ -1055,11 +1159,11 @@
     .cta-body { display: flex; flex-direction: column; gap: var(--gap-xsmall); padding: var(--gap-xxsmall) 0.5rem 0.5rem; }
     .cta-title {
       font-family: var(--font-display);
-      /* three fixed lines; narrow phones scale so the longest line fits */
-      font-size: min(var(--fs-h1), 7.2vw);
+      /* three fixed lines (longest ≈ 6.6em with its pill); narrow phones scale so it fits */
+      font-size: min(var(--fs-h1), 9.6vw);
       font-weight: 600;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
     }
     .cta-line { display: block; white-space: nowrap; }
     .cta-line.hl { color: var(--color-text-on-dark-muted); }
@@ -1108,7 +1212,7 @@
       .cta-card { grid-template-columns: minmax(0, 40%) minmax(0, 1fr); gap: var(--gap-xlarge); padding: var(--gap-small); }
       .cta-photo { aspect-ratio: auto; min-height: 28rem; }
       .cta-body { padding: var(--gap-small) 0; }
-      .cta-title { font-size: min(var(--fs-h1), 4.2vw); }
+      .cta-title { font-size: min(var(--fs-h1), 6.5vw); }
       .cta-actions { margin-top: auto; }
     }
 
@@ -1162,8 +1266,8 @@
     .stars { display: flex; gap: 0.25rem; color: var(--color-accent); }
     .quote { margin: 0; }
     /* long quotes: H5 size on phones, H4 from desktop */
-    .quote .t-h4 { font-size: var(--fs-h5); line-height: 1.25; }
-    @media (min-width: 992px) { .quote .t-h4 { font-size: var(--fs-h4); line-height: 1.2; } }
+    .quote .t-h4 { font-size: var(--fs-h5); line-height: 1.2; }
+    @media (min-width: 992px) { .quote .t-h4 { font-size: var(--fs-h4); line-height: 1.15; } }
     .quote p { user-select: text; }
     .quote p::before { content: "«"; }
     .quote p::after { content: "»"; }
@@ -1544,7 +1648,7 @@
       font-family: var(--font-display);
       font-size: var(--fs-h6);
       font-weight: 500;
-      line-height: 1.3;
+      line-height: 1.25;
       color: var(--color-text-on-dark-muted);
     }
     .footer-list { display: flex; flex-direction: column; gap: var(--gap-xxsmall); margin-top: var(--gap-xsmall); }
@@ -1865,26 +1969,24 @@
   <main id="main">
     <!-- ============ Hero ============ -->
     <section class="hero on-dark" id="hero" aria-labelledby="hero-title">
-      <div class="hero-media">
-        <img src="assets/images/hero-bg.jpg" width="1376" height="768" fetchpriority="high" decoding="async"
-             alt="Світла вітальня після ремонту: дубовий паркет ялинкою, зелений оксамитовий диван і латунний торшер">
-        <div class="hero-tint"></div>
-        <div class="hero-shade"></div>
+      <div class="hero-backdrop" aria-hidden="true">
+        <div class="hero-glow"></div>
+        <div class="hero-word-wrap"><span class="hero-word">Оселя</span></div>
         <div class="grain"></div>
       </div>
 
       <div class="container-site hero-content">
         <div class="hero-badge load-in load-1">
           <div class="avatars" aria-hidden="true">
-            <span class="avatar avatar-1"><img src="assets/images/portrait-1.jpg" width="1024" height="1024" alt=""></span>
-            <span class="avatar avatar-2"><img src="assets/images/portrait-2.jpg" width="1024" height="1024" alt=""></span>
-            <span class="avatar avatar-3"><img src="assets/images/portrait-3.jpg" width="1024" height="1024" alt=""></span>
+            <span class="avatar"><img src="assets/images/avatar-1.webp" srcset="assets/images/avatar-1.webp 1x, assets/images/avatar-1@2x.webp 2x" width="256" height="256" decoding="async" alt=""></span>
+            <span class="avatar"><img src="assets/images/avatar-2.webp" srcset="assets/images/avatar-2.webp 1x, assets/images/avatar-2@2x.webp 2x" width="256" height="256" decoding="async" alt=""></span>
+            <span class="avatar"><img src="assets/images/avatar-3.webp" srcset="assets/images/avatar-3.webp 1x, assets/images/avatar-3@2x.webp 2x" width="256" height="256" decoding="async" alt=""></span>
           </div>
           <p class="hero-badge-text">500+ задоволених клієнтів</p>
         </div>
 
         <h1 class="t-h1-hero hero-title load-in load-2" id="hero-title">
-          <span class="hero-title-lead"><span class="hero-title-img" aria-hidden="true"><img src="assets/images/hero-bg.jpg" width="1376" height="768" alt=""></span>Ремонт,</span> що повертає <span class="hero-title-muted">відчуття дому</span>
+          <span class="hero-line"><span class="hero-title-img" aria-hidden="true"><img src="assets/images/hero-bg.webp" width="384" height="256" decoding="async" alt=""></span>Ремонт,</span> <span class="hero-line">що повертає</span> <span class="hero-line hero-title-muted">відчуття дому</span>
         </h1>
 
         <div class="hero-actions load-in load-3">
@@ -1897,8 +1999,11 @@
             <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
           </a>
         </div>
+      </div>
 
-        <p class="t-text-l hero-lead load-in load-4">Перетворюємо квартири й будинки на простори, в яких хочеться жити. Понад 12 років досвіду, чесний кошторис і охайна робота без затягування термінів.</p>
+      <div class="hero-figure">
+        <img class="hero-man" src="assets/images/hero-man.webp" width="902" height="1198" fetchpriority="high" decoding="async"
+             alt="Майстер «Оселі» в зеленій касці та робочій куртці, руки схрещені">
       </div>
     </section>
 
@@ -1945,7 +2050,7 @@
                 Про нас
                 <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
               </a>
-              <img class="about-logo" src="assets/logo/logo.svg" width="150" height="32" loading="lazy" alt="Оселя">
+              <img class="about-logo" src="assets/logo/logo.svg" width="112" height="32" loading="lazy" alt="Оселя">
             </div>
 
             <div class="media about-photo-2" data-reveal data-reveal-i="2">
