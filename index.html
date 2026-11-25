@@ -1140,10 +1140,11 @@
       .why-photo-materials { flex-basis: 24.5rem; }
     }
 
-    /* ============ Projects (TZ §4.7) — dark section, stacking cards ============ */
-    .projects-section { background: var(--color-dark); color: var(--color-text-on-dark); }
-    .projects-section .t-h2 .hl { color: var(--color-text-on-dark-muted); }
-    .projects-title { max-width: 14em; }
+    /* ============ Projects (TZ §4.7) — light section, stacking cards ============ */
+    .projects-section { background: var(--color-surface); color: var(--color-text); }
+    /* on white the old on-dark muted tint would be unreadable; the accent marks the word instead */
+    .projects-section .t-h2 .hl { color: var(--color-accent); }
+    .projects-title { max-width: 14em; text-transform: uppercase; text-wrap: balance; }
     .projects-stack {
       --stick-top: calc(var(--header-h) + 1rem);
       display: flex;
@@ -1157,7 +1158,7 @@
       display: grid;
       gap: var(--gap-xsmall);
       padding: var(--gap-xxsmall);
-      border: 1px solid var(--color-border-on-dark);
+      border: 1px solid var(--color-border);
       border-radius: var(--radius-large);
       background: var(--color-surface);
       color: var(--color-text);
@@ -1176,10 +1177,19 @@
       opacity: 0;
       pointer-events: none;
     }
-    /* Light card inside the dark section: restore light-surface button and focus colours */
-    .project-card :focus-visible { outline-color: var(--color-accent); }
-    .on-dark .project-card .btn-secondary { color: var(--color-text); border-color: var(--color-border); }
-    .on-dark .project-card .btn-secondary::before { background: var(--color-border); }
+    /* Hover / keyboard focus: a thin accent outline fades in over the card's border. It is a layer
+       above the dimming, so it follows the card's scroll scaling exactly; only opacity animates. */
+    .project-card::after {
+      content: "";
+      position: absolute; inset: -1px; z-index: 3;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px var(--color-accent), 0 0 0 3px rgba(30, 107, 82, .08);
+      opacity: 0;
+      transition: opacity 350ms var(--ease);
+      pointer-events: none;
+    }
+    .project-card:hover::after,
+    .project-card:focus-within::after { opacity: 1; }
 
     .project-info { display: flex; flex-direction: column; gap: var(--gap-xsmall); padding: 0.5rem; }
     .project-num {
@@ -2299,13 +2309,16 @@
     </section>
 
     <!-- ============ Projects ============ -->
-    <section class="section projects-section on-dark" id="projects" aria-labelledby="projects-title">
+    <section class="section projects-section" id="projects" aria-labelledby="projects-title">
       <div class="container-site">
         <div class="section-head" data-reveal>
           <h2 class="t-h2 projects-title" id="projects-title">Наші проєкти для сучасного <span class="hl">життя</span></h2>
-          <a class="btn btn-primary" href="#contact">
+          <a class="btn btn-swap btn-primary" href="#contact">
             Усі проєкти
-            <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+            <span class="btn-arrow" aria-hidden="true">
+              <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+              <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+            </span>
           </a>
         </div>
         <div class="projects-stack" data-stack>
@@ -2322,9 +2335,12 @@
                 <li><svg width="20" height="20" aria-hidden="true"><use href="#i-clock"/></svg><span><b>Термін:</b> 8 тижнів</span></li>
                 <li><svg width="20" height="20" aria-hidden="true"><use href="#i-wallet"/></svg><span><b>Вартість:</b> 385 000 ₴</span></li>
               </ul>
-              <a class="btn btn-secondary" href="#contact">
+              <a class="btn btn-swap btn-secondary" href="#contact">
                 Детальніше
-                <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+                <span class="btn-arrow" aria-hidden="true">
+                  <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                  <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                </span>
               </a>
             </div>
             <div class="media project-media">
@@ -2344,9 +2360,12 @@
                 <li><svg width="20" height="20" aria-hidden="true"><use href="#i-clock"/></svg><span><b>Термін:</b> 7 тижнів</span></li>
                 <li><svg width="20" height="20" aria-hidden="true"><use href="#i-wallet"/></svg><span><b>Вартість:</b> 310 000 ₴</span></li>
               </ul>
-              <a class="btn btn-secondary" href="#contact">
+              <a class="btn btn-swap btn-secondary" href="#contact">
                 Детальніше
-                <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+                <span class="btn-arrow" aria-hidden="true">
+                  <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                  <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                </span>
               </a>
             </div>
             <div class="media project-media">
@@ -2366,9 +2385,12 @@
                 <li><svg width="20" height="20" aria-hidden="true"><use href="#i-clock"/></svg><span><b>Термін:</b> 12 тижнів</span></li>
                 <li><svg width="20" height="20" aria-hidden="true"><use href="#i-wallet"/></svg><span><b>Вартість:</b> 1 150 000 ₴</span></li>
               </ul>
-              <a class="btn btn-secondary" href="#contact">
+              <a class="btn btn-swap btn-secondary" href="#contact">
                 Детальніше
-                <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+                <span class="btn-arrow" aria-hidden="true">
+                  <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                  <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                </span>
               </a>
             </div>
             <div class="media project-media">
