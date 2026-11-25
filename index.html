@@ -307,6 +307,36 @@
     }
     .on-dark .btn-secondary::before { background: var(--color-border-on-dark); }
 
+    /* Unified arrow hover (.btn-swap): the button itself never changes — no movement, shadow,
+       glow or fill. Inside a 20px window the arrow glides out up-right while a second arrow follows
+       it in from the lower left on the same diagonal track (a conveyor: together they always make
+       one whole arrow, so there is no empty frame). Pressed: the arrow settles at 85%.
+       Used by: header CTA, mobile-menu CTA, Hero buttons, «Про нас», «Усі послуги». */
+    .btn-swap,
+    .btn-swap:hover,
+    .btn-swap:focus-visible,
+    .btn-swap:active { transform: none; }
+    .btn-swap::before { display: none; }
+    .btn-arrow {
+      display: inline-grid;
+      width: 20px; height: 20px;
+      overflow: hidden;
+    }
+    .btn-arrow .btn-icon { grid-area: 1 / 1; transition: transform 600ms var(--ease); }
+    .btn-arrow .btn-icon-next { transform: translate(-100%, 100%); }
+    .btn-swap:hover .btn-arrow .btn-icon,
+    .btn-swap:focus-visible .btn-arrow .btn-icon { transform: translate(100%, -100%); }
+    .btn-swap:hover .btn-arrow .btn-icon-next,
+    .btn-swap:focus-visible .btn-arrow .btn-icon-next { transform: translate(0, 0); }
+    .btn-swap:active .btn-arrow .btn-icon-next { transform: scale(.85); transition-duration: 100ms; }
+    /* Reduced motion: the arrow stays put; only the pressed state remains */
+    @media (prefers-reduced-motion: reduce) {
+      .btn-swap:hover .btn-arrow .btn-icon,
+      .btn-swap:focus-visible .btn-arrow .btn-icon { transform: none; }
+      .btn-arrow .btn-icon-next { visibility: hidden; }
+      .btn-swap:active .btn-arrow .btn-icon:not(.btn-icon-next) { transform: scale(.85); }
+    }
+
     /* ============ Header (TZ §4.1) ============ */
     .site-header {
       position: fixed;
@@ -674,35 +704,6 @@
     @media (min-width: 480px) {
       .hero-actions { grid-auto-flow: column; grid-auto-columns: max-content; }
     }
-    /* Hero buttons: lift + arrow nudge + one soft glint sweep; pressed state sinks below rest.
-       Only transform and opacity animate. */
-    .hero-actions .btn { transition: transform 320ms var(--ease); }
-    .hero-actions .btn::after {
-      content: "";
-      position: absolute; inset: 0; z-index: -1;
-      border-radius: inherit;
-      background: linear-gradient(105deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, .22) 50%, rgba(255, 255, 255, 0) 70%);
-      opacity: 0;
-      transform: translateX(-110%);
-      pointer-events: none;
-    }
-    .hero-actions .btn-secondary::after {
-      background: linear-gradient(105deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, .12) 50%, rgba(255, 255, 255, 0) 70%);
-    }
-    .hero-actions .btn:hover,
-    .hero-actions .btn:focus-visible { transform: translateY(-3px); }
-    .hero-actions .btn:hover::after,
-    .hero-actions .btn:focus-visible::after {
-      opacity: 1;
-      transform: translateX(110%);
-      transition: transform 750ms var(--ease), opacity 200ms var(--ease);
-    }
-    .hero-actions .btn:focus-visible::before { opacity: 1; }
-    .hero-actions .btn .btn-icon { transition: transform 320ms var(--ease); }
-    .hero-actions .btn:hover .btn-icon,
-    .hero-actions .btn:focus-visible .btn-icon { transform: translateX(4px); }
-    .hero-actions .btn:active { transform: translateY(1px) scale(.97); transition-duration: 90ms; }
-    .hero-actions .btn:active .btn-icon { transform: translateX(1px); transition-duration: 90ms; }
 
     /* Page-load sequence: badge → H1 → buttons */
     @keyframes rise {
@@ -871,36 +872,6 @@
     .feature-text { color: var(--color-text-muted); }
 
     .about-cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-xsmall); }
-    /* «Про нас»: lift, arrow nudge, soft accent fill + accent ring fading in; distinct pressed state.
-       The 1px border is drawn as an inset shadow so the accent ring can sit exactly on top of it. */
-    .about-cta .btn {
-      border: 0;
-      padding: calc(1rem + 1px) calc(1.75rem + 1px);
-      box-shadow: inset 0 0 0 1px var(--color-border);
-      transition: transform 320ms var(--ease);
-    }
-    .about-cta .btn::before { background: var(--color-accent-soft); }
-    .about-cta .btn::after {
-      content: "";
-      position: absolute; inset: 0; z-index: -1;
-      border-radius: inherit;
-      box-shadow: inset 0 0 0 1px var(--color-accent);
-      opacity: 0;
-      transition: opacity var(--dur-hover) var(--ease);
-      pointer-events: none;
-    }
-    .about-cta .btn:hover,
-    .about-cta .btn:focus-visible { transform: translateY(-3px); }
-    .about-cta .btn:hover::before,
-    .about-cta .btn:focus-visible::before { opacity: .7; }
-    .about-cta .btn:hover::after,
-    .about-cta .btn:focus-visible::after { opacity: 1; }
-    .about-cta .btn .btn-icon { transition: transform 320ms var(--ease); }
-    .about-cta .btn:hover .btn-icon,
-    .about-cta .btn:focus-visible .btn-icon { transform: translateX(4px); }
-    .about-cta .btn:active { transform: translateY(1px) scale(.97); transition-duration: 90ms; }
-    .about-cta .btn:active::before { opacity: 1; }
-    .about-cta .btn:active .btn-icon { transform: translateX(1px); transition-duration: 90ms; }
     .about-logo { height: 1.5rem; width: auto; }
     @media (min-width: 992px) {
       .about-cta { gap: var(--gap-small); }
@@ -910,7 +881,9 @@
     /* ============ Services (TZ §4.4) ============ */
     .section-head { display: flex; flex-direction: column; gap: var(--gap-medium); }
     .section-head .btn { width: 100%; }
-    .services-title { max-width: 14em; }
+    .services-title { max-width: 14em; text-transform: uppercase; text-wrap: balance; }
+    /* «Усі послуги»: no resting shadow (requested); hover = shared .btn-swap arrow */
+    .services-head .btn-primary { box-shadow: none; }
     @media (min-width: 992px) {
       .section-head { flex-direction: row; align-items: center; justify-content: space-between; }
       .section-head .btn { width: auto; }
@@ -931,20 +904,38 @@
       border: 1px solid var(--color-border);
       border-radius: var(--radius-small);
       background: var(--color-surface);
-      transition: transform var(--dur-hover) var(--ease);
+      transition: transform 450ms var(--ease);
     }
-    /* Elevation on hover: a shadow layer that fades in */
+    /* Hover/focus: the card lifts and comes forward (z-index) with a floating shadow and a thin
+       accent ring. Only transform/opacity animate, so neighbouring cards never move. */
     .service-card::after {
       content: "";
       position: absolute; inset: -1px; z-index: -1;
       border-radius: inherit;
-      box-shadow: var(--shadow-elevated);
+      box-shadow: var(--shadow-floating);
       opacity: 0;
-      transition: opacity var(--dur-hover) var(--ease);
+      transition: opacity 450ms var(--ease);
     }
-    .service-card:hover::after,
-    .service-card:focus-visible::after { opacity: 1; }
-    .service-card:active { transform: scale(.99); }
+    .service-card::before {
+      content: "";
+      position: absolute; inset: -1px; z-index: 2;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px var(--color-accent), 0 0 0 4px rgba(30, 107, 82, .08);
+      opacity: 0;
+      transition: opacity 450ms var(--ease);
+      pointer-events: none;
+    }
+    .service-card:hover,
+    .service-card:focus-visible { z-index: 1; }
+    .service-card:focus-visible::after,
+    .service-card:focus-visible::before { opacity: 1; }
+    .service-card:focus-visible { transform: translateY(-6px); }
+    @media (hover: hover) {
+      .service-card:hover { transform: translateY(-6px); }
+      .service-card:hover::after,
+      .service-card:hover::before { opacity: 1; }
+    }
+    .service-card:active { transform: translateY(-2px) scale(.99); transition-duration: 150ms; }
 
     .service-body {
       display: flex;
@@ -956,17 +947,20 @@
     .service-arrow {
       width: 1.5rem; height: 1.5rem;
       color: var(--color-text);
-      transition: transform var(--dur-hover) var(--ease);
+      transition: transform var(--dur-hover) var(--ease), opacity var(--dur-hover) var(--ease);
     }
     .service-card:hover .service-arrow,
     .service-card:focus-visible .service-arrow { transform: translate(3px, -3px); }
 
+    /* Card title one step up (H5: 24px desktop / 20px mobile) so it reads clearly above the text */
     .service-title {
       position: relative;
       align-self: flex-start;
       margin-top: auto;
       padding-top: var(--gap-xlarge);
       padding-bottom: 0.25rem;
+      font-size: var(--fs-h5);
+      line-height: 1.2;
     }
     /* Link underline grows from the left via scaleX */
     .service-title::after {
@@ -980,7 +974,7 @@
     }
     .service-card:hover .service-title::after,
     .service-card:focus-visible .service-title::after { transform: scaleX(1); transform-origin: left; }
-    .service-text { margin-top: 0.5rem; color: var(--color-text-muted); }
+    .service-text { margin-top: 0.5rem; max-width: 30ch; line-height: 1.5; color: var(--color-text-muted); text-wrap: balance; }
 
     .service-media { border-radius: var(--radius-xsmall); aspect-ratio: 4 / 3; }
     .service-media img { transition: transform 500ms var(--ease); }
@@ -995,23 +989,29 @@
       .service-media { aspect-ratio: auto; }
     }
 
-    /* Desktop: the active card widens and reveals its photo (as in the reference) */
+    /* Desktop: the hovered/focused card expands and shows its photo; the first card is the default.
+       Exception to «only transform/opacity» (like the FAQ accordion, TZ §4.12): the column widths
+       interpolate so expand and collapse happen together. The text column keeps ≈ the same width in
+       both states (wide card = 2fr split 1:1), so copy does not reflow while the widths move. */
     @media (min-width: 992px) {
-      .services-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); }
+      .services-grid {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+        transition: grid-template-columns 650ms var(--ease);
+      }
       .services-grid[data-active="1"] { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); }
       .services-grid[data-active="2"] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr); }
 
-      .service-card { grid-template-columns: minmax(0, 1fr); }
+      .service-card {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0fr);
+        transition: transform 450ms var(--ease), grid-template-columns 650ms var(--ease);
+      }
       .service-card.is-active { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
       .service-body { min-height: 17rem; }
-      .service-media { display: none; aspect-ratio: auto; }
-      .service-card.is-active .service-media { display: block; }
-      .service-card.is-entering .service-media { animation: media-in 600ms var(--ease) both; }
-      .service-card.is-active .service-arrow { display: none; }
-    }
-    @keyframes media-in {
-      from { opacity: 0; transform: scale(.96); }
-      to   { opacity: 1; transform: scale(1); }
+      /* Photo: fades in almost at once, alongside the expansion (40ms lead-in, 300ms fade);
+         the outgoing photo clears slightly faster so the two never compete */
+      .service-media { aspect-ratio: auto; opacity: 0; transition: opacity 160ms var(--ease); }
+      .service-card.is-active .service-media { opacity: 1; transition: opacity 300ms var(--ease) 40ms; }
+      .service-card.is-active .service-arrow { opacity: 0; }
     }
 
     /* ============ Stats (TZ §4.5) ============ */
@@ -1980,9 +1980,12 @@
           <svg width="20" height="20" aria-hidden="true"><use href="#i-phone"/></svg>
           <span>+380 48 000 00 00</span>
         </a>
-        <a class="btn btn-primary" href="#contact">
+        <a class="btn btn-swap btn-primary" href="#contact">
           Безкоштовний замір
-          <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+          <span class="btn-arrow" aria-hidden="true">
+            <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+            <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+          </span>
         </a>
       </div>
 
@@ -2019,9 +2022,12 @@
           <svg width="22" height="22" aria-hidden="true"><use href="#i-phone"/></svg>
           <span>+380 48 000 00 00</span>
         </a>
-        <a class="btn btn-primary" href="#contact" data-menu-link>
+        <a class="btn btn-swap btn-primary" href="#contact" data-menu-link>
           Безкоштовний замір
-          <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+          <span class="btn-arrow" aria-hidden="true">
+            <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+            <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+          </span>
         </a>
       </div>
     </div>
@@ -2051,13 +2057,19 @@
         </h1>
 
         <div class="hero-actions load-in load-3">
-          <a class="btn btn-primary" href="#contact">
+          <a class="btn btn-swap btn-primary" href="#contact">
             Отримати розрахунок
-            <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+            <span class="btn-arrow" aria-hidden="true">
+              <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+              <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+            </span>
           </a>
-          <a class="btn btn-secondary" href="#services">
+          <a class="btn btn-swap btn-secondary" href="#services">
             Наші послуги
-            <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+            <span class="btn-arrow" aria-hidden="true">
+              <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+              <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+            </span>
           </a>
         </div>
       </div>
@@ -2110,9 +2122,12 @@
             </ul>
 
             <div class="about-cta" data-reveal data-reveal-i="4">
-              <a class="btn btn-secondary" href="#contact">
+              <a class="btn btn-swap btn-secondary" href="#contact">
                 Про нас
-                <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+                <span class="btn-arrow" aria-hidden="true">
+                  <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                  <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                </span>
               </a>
               <img class="about-logo" src="assets/logo/logo.svg" width="112" height="32" loading="lazy" alt="Оселя">
             </div>
@@ -2129,11 +2144,14 @@
     <!-- ============ Services ============ -->
     <section class="section section-flush-top bg-surface" id="services" aria-labelledby="services-title">
       <div class="container-site">
-        <div class="section-head" data-reveal>
+        <div class="section-head services-head" data-reveal>
           <h2 class="t-h2 services-title" id="services-title">Послуги з ремонту, виконані <span class="text-accent nowrap">на совість</span></h2>
-          <a class="btn btn-primary" href="#contact">
+          <a class="btn btn-swap btn-primary" href="#contact">
             Усі послуги
-            <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+            <span class="btn-arrow" aria-hidden="true">
+              <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+              <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+            </span>
           </a>
         </div>
 
@@ -2822,6 +2840,24 @@
         setActive(sections[0].id);
       }
 
+      /* ---- Services: hovered / focused card expands; the first card is the default (desktop) ---- */
+      const servicesGrid = document.querySelector('[data-services]');
+      if (servicesGrid) {
+        const cards = [...servicesGrid.querySelectorAll('[data-service]')];
+        const activate = (card) => {
+          if (card.classList.contains('is-active')) return;
+          cards.forEach((c) => c.classList.toggle('is-active', c === card));
+          servicesGrid.dataset.active = card.dataset.service;
+        };
+        cards.forEach((card) => {
+          card.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') activate(card); });
+          card.addEventListener('focus', () => activate(card));
+        });
+        // nothing hovered or focused → back to the first card
+        servicesGrid.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') activate(cards[0]); });
+        servicesGrid.addEventListener('focusout', (e) => { if (!servicesGrid.contains(e.relatedTarget)) activate(cards[0]); });
+      }
+
       /* ---- About: accessible tabs (←/→, Home/End) ---- */
       document.querySelectorAll('[data-tabs]').forEach((list) => {
         const tabs = [...list.querySelectorAll('[role="tab"]')];
@@ -2849,23 +2885,6 @@
         });
       });
 
-      /* ---- Services: hovered / focused card becomes the wide one (desktop) ---- */
-      const servicesGrid = document.querySelector('[data-services]');
-      if (servicesGrid) {
-        const cards = [...servicesGrid.querySelectorAll('[data-service]')];
-        const activate = (card) => {
-          if (card.classList.contains('is-active')) return;
-          cards.forEach((c) => {
-            c.classList.toggle('is-active', c === card);
-            c.classList.toggle('is-entering', c === card);
-          });
-          servicesGrid.dataset.active = card.dataset.service;
-        };
-        cards.forEach((card) => {
-          card.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') activate(card); });
-          card.addEventListener('focus', () => activate(card));
-        });
-      }
 
       /* ---- Video: poster only if the file is missing; no autoplay with reduced motion ---- */
       const video = document.querySelector('[data-video]');
