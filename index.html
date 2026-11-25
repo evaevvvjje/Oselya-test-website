@@ -1033,11 +1033,14 @@
       opacity: .6;
       pointer-events: none;
     }
+    /* Equal share per stat; each stat is centred in its column so the group is symmetric */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--gap-large) var(--gap-xsmall);
+      text-align: center;
     }
+    .stat { display: flex; flex-direction: column; align-items: center; }
     @media (min-width: 992px) {
       .stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--gap-small); }
       .stat-num { font-size: var(--fs-number); }
@@ -1045,6 +1048,7 @@
     }
     .stat-num {
       display: flex;
+      justify-content: center;
       font-family: var(--font-display);
       /* TZ §3.3: 4rem mobile / 6rem desktop */
       font-size: var(--fs-number);
@@ -1055,29 +1059,37 @@
       white-space: nowrap;
     }
     .stat-suffix { color: var(--color-accent); }
-    .stat-label { margin-top: 0.5rem; color: var(--color-text-muted); }
+    .stat-label { margin-top: 0.5rem; max-width: 16em; color: var(--color-text-muted); text-wrap: balance; }
+    /* Phones: half-width columns are a few px too narrow for «рекомендують нас», so the label may
+       use half of the gutter on each side (still centred under its number) instead of stranding a word */
+    @media (max-width: 767px) {
+      .stat-label { width: calc(100% + var(--gap-xsmall)); max-width: none; }
+    }
 
-    /* Odometer: each digit is a column 0-9 + a trailing 0, moved with translateY.
-       Final positions are the default, so no-JS / reduced motion show the value at once */
-    .odo-digit { position: relative; display: inline-block; height: 1em; overflow-x: visible; overflow-y: clip; }
-    .odo-sizer { display: block; visibility: hidden; }
-    .odo-col { position: absolute; inset: 0 0 auto 0; display: flex; flex-direction: column; align-items: center; }
-    .odo-col > span { display: block; height: 1em; }
-    .d-1 { transform: translateY(calc(-100% * 1 / 11)); }
-    .d-2 { transform: translateY(calc(-100% * 2 / 11)); }
-    .d-3 { transform: translateY(calc(-100% * 3 / 11)); }
-    .d-4 { transform: translateY(calc(-100% * 4 / 11)); }
-    .d-5 { transform: translateY(calc(-100% * 5 / 11)); }
-    .d-6 { transform: translateY(calc(-100% * 6 / 11)); }
-    .d-7 { transform: translateY(calc(-100% * 7 / 11)); }
-    .d-8 { transform: translateY(calc(-100% * 8 / 11)); }
-    .d-9 { transform: translateY(calc(-100% * 9 / 11)); }
-    .d-0 { transform: translateY(calc(-100% * 10 / 11)); }
-    .stats-grid:not(.is-armed) .odo-col { transition: transform 1600ms var(--ease); }
-    .stats-grid.is-armed .odo-col { transform: translateY(0); }
+    /* Rolling digits (odometer): every digit position is a 1em window with a vertical strip that
+       moves DOWN, so each next digit enters from the top. All strips share one 2s easeOutCubic
+       transition started by a single class, so they start and stop on the same frame. The window
+       keeps the width of its final digit, so nothing shifts; + / % are separate and never move.
+       Without JS or with reduced motion the plain final number is shown. */
+    .roll { display: inline-flex; }
+    .roll-digit { position: relative; display: inline-block; height: 1em; overflow-x: visible; overflow-y: clip; }
+    .roll-sizer { display: block; visibility: hidden; }
+    .roll-strip {
+      position: absolute; top: 0; left: 50%;
+      display: flex; flex-direction: column; align-items: center;
+      transform: translate(-50%, calc(var(--steps) * -1.25em));
+    }
+    /* each step is 1.25em: the window is 1em, so the extra .25em of air keeps neighbouring
+       digits out of view while rolling (mostly one digit visible at a time) */
+    .roll-strip > span { display: block; height: 1.25em; }
+    .stats-grid.is-rolling .roll-strip {
+      transform: translate(-50%, 0);
+      transition: transform 2000ms cubic-bezier(0.33, 1, 0.68, 1); /* easeOutCubic */
+    }
+
 
     /* ============ Why us (TZ §4.6) ============ */
-    .why-title { max-width: 18em; margin-inline: auto; text-align: center; }
+    .why-title { max-width: 18em; margin-inline: auto; text-align: center; text-transform: uppercase; text-wrap: balance; }
     .why-grid { display: grid; gap: var(--gap-xxsmall); margin-top: var(--gap-xxlarge); }
     .why-col { display: grid; gap: var(--gap-xxsmall); align-content: start; }
     .why-card {
@@ -1091,19 +1103,22 @@
     }
     .why-card-dark { background: var(--color-dark); color: var(--color-text-on-dark); }
     .why-card-dark .why-text { color: var(--color-text-on-dark-muted); }
+    /* Large outline icons as in the reference (no filled circle): 5rem on phones/tablets,
+       6.5rem on desktop. The symbols draw a non-scaling stroke; 2.5px reads clearly at this size
+       while staying a light outline. Same size + stroke for both icons. */
     .why-icon {
-      display: grid;
-      place-items: center;
-      width: 4.5rem; height: 4.5rem;
-      border-radius: var(--radius-full);
-      background: var(--color-accent-soft);
+      display: block;
+      width: 5rem; height: 5rem;
       color: var(--color-accent);
+      stroke-width: 2.5px;
     }
+    .why-icon svg { display: block; width: 100%; height: 100%; }
     .why-body { margin-top: auto; }
+    .why-card .t-h5 { text-transform: uppercase; text-wrap: balance; }
     .t-h5 { font-family: var(--font-display); font-size: var(--fs-h5); font-weight: 500; line-height: 1.2; }
     .why-text { margin-top: 0.5rem; color: var(--color-text-muted); }
     .why-photo { border-radius: var(--radius-small); aspect-ratio: 4 / 3; }
-    .why-photo-team img { object-position: 30% 50%; }
+    .why-photo-team img { object-position: 50% 35%; }
     .why-photo-materials img { object-position: 50% 50%; }
     .why-photo-clients img { object-position: 45% 50%; }
     @media (min-width: 768px) and (max-width: 991px) {
@@ -1111,15 +1126,18 @@
     }
     /* Desktop: three columns of different rhythm, as in the reference */
     @media (min-width: 992px) {
-      /* each column totals 45.5rem: 21.5 + 1 + 23 (sides) and 29.5 + 1 + 15 (middle) */
+      /* each column totals 45.5rem: 21.5 + 1 + 23 (sides) and 24.5 + 1 + 20 (middle) */
       .why-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .why-col { display: flex; flex-direction: column; }
       .why-card { position: relative; min-height: 21.5rem; }
       /* icon sits in the upper-right corner without taking height, like the reference */
-      .why-card .why-icon { position: absolute; top: var(--gap-small); right: var(--gap-xlarge); }
-      .why-card-dark { min-height: 15rem; }
+      /* same visual centre as before: the old 4.5rem circle was 1rem larger on each side */
+      .why-card .why-icon { position: absolute; top: var(--gap-medium); right: var(--gap-xlarge); width: 6.5rem; height: 6.5rem; }
+      /* the dark card needs room for the large icon above its 3-line text; the photo above it
+         gives up the same 5rem, so the middle column keeps its 45.5rem total and bottoms align */
+      .why-card-dark { min-height: 20rem; }
       .why-photo { aspect-ratio: auto; flex: 1 0 23rem; }
-      .why-photo-materials { flex-basis: 29.5rem; }
+      .why-photo-materials { flex-basis: 24.5rem; }
     }
 
     /* ============ Projects (TZ §4.7) — dark section, stacking cards ============ */
@@ -1854,7 +1872,7 @@
       </g>
     </symbol>
     <symbol id="i-team" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" vector-effect="non-scaling-stroke"/>
         <path d="M2.5 20a6.5 6.5 0 0 1 13 0" vector-effect="non-scaling-stroke"/>
         <path d="M16 4.5a3.5 3.5 0 0 1 0 6.5" vector-effect="non-scaling-stroke"/>
@@ -1862,17 +1880,18 @@
       </g>
     </symbol>
     <symbol id="i-layers" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 3 2.5 8 12 13l9.5-5L12 3Z" vector-effect="non-scaling-stroke"/>
         <path d="m2.5 12.5 9.5 5 9.5-5" vector-effect="non-scaling-stroke"/>
         <path d="m2.5 16.5 9.5 5 9.5-5" vector-effect="non-scaling-stroke"/>
       </g>
     </symbol>
     <symbol id="i-smile" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" vector-effect="non-scaling-stroke"/>
         <path d="M8.5 14.5a4 4 0 0 0 7 0" vector-effect="non-scaling-stroke"/>
-        <path d="M9 9.5h.01M15 9.5h.01" vector-effect="non-scaling-stroke"/>
+        <circle cx="9" cy="9.5" r="0.7" fill="currentColor" stroke="none"/>
+        <circle cx="15" cy="9.5" r="0.7" fill="currentColor" stroke="none"/>
       </g>
     </symbol>
     <symbol id="i-user" viewBox="0 0 24 24">
@@ -2211,22 +2230,22 @@
           <div class="stats-map" aria-hidden="true"></div>
           <ul class="stats-grid" data-stats>
           <li class="stat" data-reveal>
-            <p class="stat-num" aria-hidden="true"><span class="odo" data-odometer>500</span><span class="stat-suffix">+</span></p>
+            <p class="stat-num" aria-hidden="true"><span class="roll" data-roll>500</span><span class="stat-suffix">+</span></p>
             <p class="sr-only">500+</p>
             <p class="t-text-m stat-label">Задоволених клієнтів</p>
           </li>
           <li class="stat" data-reveal data-reveal-i="1">
-            <p class="stat-num" aria-hidden="true"><span class="odo" data-odometer>12</span><span class="stat-suffix">+</span></p>
+            <p class="stat-num" aria-hidden="true"><span class="roll" data-roll>12</span><span class="stat-suffix">+</span></p>
             <p class="sr-only">12+</p>
             <p class="t-text-m stat-label">Років досвіду</p>
           </li>
           <li class="stat" data-reveal data-reveal-i="2">
-            <p class="stat-num" aria-hidden="true"><span class="odo" data-odometer>98</span><span class="stat-suffix">%</span></p>
+            <p class="stat-num" aria-hidden="true"><span class="roll" data-roll>98</span><span class="stat-suffix">%</span></p>
             <p class="sr-only">98%</p>
             <p class="t-text-m stat-label">Клієнтів, що рекомендують нас</p>
           </li>
           <li class="stat" data-reveal data-reveal-i="3">
-            <p class="stat-num" aria-hidden="true"><span class="odo" data-odometer>15</span><span class="stat-suffix">+</span></p>
+            <p class="stat-num" aria-hidden="true"><span class="roll" data-roll>15</span><span class="stat-suffix">+</span></p>
             <p class="sr-only">15+</p>
             <p class="t-text-m stat-label">Нагород і відзнак</p>
           </li>
@@ -2242,14 +2261,14 @@
         <div class="why-grid">
           <div class="why-col">
             <div class="why-card" data-reveal>
-              <span class="why-icon" aria-hidden="true"><svg width="32" height="32"><use href="#i-team"/></svg></span>
+              <span class="why-icon" aria-hidden="true"><svg width="104" height="104"><use href="#i-team"/></svg></span>
               <div class="why-body">
                 <h3 class="t-h5">Досвідчена команда</h3>
                 <p class="t-text-m why-text">Понад 12 років виконуємо ремонти з точністю і турботою про кожну деталь.</p>
               </div>
             </div>
             <div class="media why-photo why-photo-team" data-reveal data-reveal-i="1">
-              <img src="assets/images/why-team.jpg" width="1376" height="768" loading="lazy" decoding="async" alt="Майстри в робочих куртках обговорюють креслення на планшеті у відремонтованій кімнаті">
+              <img src="assets/images/renovation-team-working.webp" width="1536" height="1024" loading="lazy" decoding="async" alt="Двоє майстрів радісно дають «п’ять» посеред ремонту у світлій квартирі">
             </div>
           </div>
           <div class="why-col">
@@ -2257,7 +2276,6 @@
               <img src="assets/images/why-materials.jpg" width="1376" height="768" loading="lazy" decoding="async" alt="Зразки дубового шпону, травертину, латунна ручка й викраски фарби на мармурі">
             </div>
             <div class="why-card why-card-dark" data-reveal data-reveal-i="2">
-              <span class="why-icon" aria-hidden="true"><svg width="32" height="32"><use href="#i-layers"/></svg></span>
               <div class="why-body">
                 <h3 class="t-h5">Якісні матеріали</h3>
                 <p class="t-text-m why-text">Працюємо з перевіреними постачальниками й підбираємо матеріали під ваш бюджет.</p>
@@ -2266,7 +2284,7 @@
           </div>
           <div class="why-col">
             <div class="why-card" data-reveal data-reveal-i="2">
-              <span class="why-icon" aria-hidden="true"><svg width="32" height="32"><use href="#i-smile"/></svg></span>
+              <span class="why-icon" aria-hidden="true"><svg width="104" height="104"><use href="#i-smile"/></svg></span>
               <div class="why-body">
                 <h3 class="t-h5">Задоволення клієнта</h3>
                 <p class="t-text-m why-text">Працюємо поруч із вами, щоб ваша ідея стала реальністю без компромісів.</p>
@@ -3112,42 +3130,46 @@
         window.addEventListener('resize', () => { measure(); queue(); });
       }
 
-      /* ---- Stats: odometer digits roll once when the row enters the viewport ---- */
+      /* ---- Stats: rolling digits (odometer), all four together, once, when the row comes into view.
+         Turns per position are capped (units ≤ 2, tens ≤ 1, hundreds 0) so it stays calm, not a slot
+         machine. Final values are in the markup, so no-JS / reduced motion simply show them. ---- */
       const statsGrid = document.querySelector('[data-stats]');
-      if (statsGrid) {
-        statsGrid.querySelectorAll('[data-odometer]').forEach((el) => {
+      if (statsGrid && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          && !navigator.webdriver && 'IntersectionObserver' in window) {
+        const MAX_TURNS = [2, 1]; // by position from the right: units, tens; higher positions: 0
+        statsGrid.querySelectorAll('[data-roll]').forEach((el) => {
           const value = el.textContent.trim();
+          const target = Number(value);
           el.textContent = '';
-          [...value].forEach((ch) => {
+          [...value].forEach((ch, i) => {
+            const pos = value.length - 1 - i; // 0 = units
+            const turns = Math.min(Math.floor(target / 10 ** (pos + 1)), MAX_TURNS[pos] || 0);
+            const steps = Number(ch) + 10 * turns;
             const digit = document.createElement('span');
-            digit.className = 'odo-digit';
+            digit.className = 'roll-digit';
             const sizer = document.createElement('span');
-            sizer.className = 'odo-sizer';
+            sizer.className = 'roll-sizer';
             sizer.textContent = ch;
-            const col = document.createElement('span');
-            col.className = 'odo-col d-' + ch;
-            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0].forEach((n) => {
+            const strip = document.createElement('span');
+            strip.className = 'roll-strip';
+            strip.style.setProperty('--steps', steps);
+            // top → bottom: final digit … 1, 0 (start). Moving the strip down rolls 0 → final.
+            for (let k = steps; k >= 0; k -= 1) {
               const cell = document.createElement('span');
-              cell.textContent = n;
-              col.append(cell);
-            });
-            digit.append(sizer, col);
+              cell.textContent = k % 10;
+              strip.append(cell);
+            }
+            digit.append(sizer, strip);
             el.append(digit);
           });
         });
-
-        const animateStats = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-          && !navigator.webdriver && 'IntersectionObserver' in window;
-        if (animateStats) {
-          statsGrid.classList.add('is-armed');
-          const statsIO = new IntersectionObserver((entries, obs) => {
-            if (!entries.some((e) => e.isIntersecting)) return;
-            // two frames so the armed (zero) position is painted before rolling
-            requestAnimationFrame(() => requestAnimationFrame(() => statsGrid.classList.remove('is-armed')));
-            obs.disconnect();
-          }, { threshold: 0.4 });
-          statsIO.observe(statsGrid);
-        }
+        const statsIO = new IntersectionObserver((entries, obs) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          obs.disconnect();
+          // two frames so the start position (all zeros) is painted before rolling
+          requestAnimationFrame(() => requestAnimationFrame(() => statsGrid.classList.add('is-rolling')));
+        }, { threshold: 0.4 });
+        statsIO.observe(statsGrid);
       }
 
       /* ---- Reveal on scroll: once per element, 80ms stagger via data-reveal-i ---- */
