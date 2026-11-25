@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Dev-only output
+temporary screenshots/
+
+# Design reference screenshots (third-party template captures, large)
+assets/references/
+
+# Local editor / OS files
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+.env
