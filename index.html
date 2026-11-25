@@ -1238,46 +1238,57 @@
       gap: var(--gap-small);
       padding: var(--gap-xxsmall);
       border-radius: var(--radius-large);
-      background: var(--color-dark);
+      /* Restrained dark gradient (user-approved exception to TZ §3.1): deep green top-left → near-black
+         bottom-right, plus one very soft wash of the accent — no bright spots or glow. */
+      background:
+        radial-gradient(90% 120% at 0% 0%, rgba(30, 107, 82, .16), transparent 60%),
+        linear-gradient(135deg, #1A2C24 0%, var(--color-dark) 45%, #0A110E 100%);
       color: var(--color-text-on-dark);
       overflow: clip;
     }
     .cta-card > .grain { z-index: -1; }
     .cta-photo { border-radius: var(--radius-medium); aspect-ratio: 16 / 10; }
-    .cta-photo img { object-position: 40% 50%; }
-    .cta-body { display: flex; flex-direction: column; gap: var(--gap-xsmall); padding: var(--gap-xxsmall) 0.5rem 0.5rem; }
+    .cta-photo img { object-position: 45% 35%; }
+    .cta-body {
+      display: flex; flex-direction: column; gap: var(--gap-xsmall);
+      padding: var(--gap-xxsmall) 0.5rem 0.5rem;
+      container-type: inline-size;
+    }
     .cta-title {
       font-family: var(--font-display);
-      /* three fixed lines (longest ≈ 6.6em with its pill); narrow phones scale so it fits */
+      /* phones: line 1 may break after its pill (3 lines); from 768px it is exactly two lines */
       font-size: min(var(--fs-h1), 9.6vw);
       font-weight: 600;
       line-height: 1.1;
       letter-spacing: -0.01em;
+      text-transform: uppercase;
     }
-    .cta-line { display: block; white-space: nowrap; }
+    .cta-line { display: block; }
+    .cta-chunk { white-space: nowrap; }
     .cta-line.hl { color: var(--color-text-on-dark-muted); }
-    /* Pill photos sit in the text flow and scale with the font size */
+    /* Pill photos sit in the text flow and scale with the font size. Height = Oswald cap height
+       (0.81em) and the bottom sits on the baseline, so each pill is exactly as tall as the capitals. */
     .pill {
       display: inline-block;
-      vertical-align: -0.08em;
-      width: 1.9em; height: 0.82em;
-      margin-inline: 0.25em;
+      vertical-align: baseline;
+      width: 1.6em; height: 0.81em;
+      margin-inline: 0.2em;
       border-radius: var(--radius-full);
       overflow: hidden;
       box-shadow: 0 0 0 1px var(--color-border-on-dark);
     }
     .pill img { width: 100%; height: 100%; object-fit: cover; }
     .pill-lead { margin-left: 0; }
-    .pill-roller img { transform: scale(2.2); transform-origin: 50% 40%; }
-    .pill-parquet img { object-position: 30% 60%; }
-    .pill-faucet img { object-position: 45% 40%; }
+    .pill-craft { margin-right: 0; } /* the word space after it already gives the gap */
+    .pill-craft img { object-position: 50% 35%; }
+    .pill-interior img { object-position: 55% 40%; }
     .cta-text { color: var(--color-text-on-dark-muted); max-width: 34rem; }
     .cta-actions { display: flex; flex-direction: column; gap: var(--gap-xsmall); margin-top: var(--gap-xxsmall); }
     .cta-actions .btn { width: 100%; white-space: normal; text-align: center; }
     .cta-phone {
       display: inline-flex;
       align-items: center;
-      gap: var(--gap-xxsmall);
+      gap: 0.75rem;
       border-radius: var(--radius-full);
       transition: transform var(--dur-hover) var(--ease), opacity var(--dur-hover) var(--ease);
     }
@@ -1286,22 +1297,26 @@
     .cta-phone-icon {
       display: grid;
       place-items: center;
-      width: 3.5rem; height: 3.5rem;
+      flex: none;
+      width: 3rem; height: 3rem;
       border: 1px solid var(--color-border-on-dark);
       border-radius: var(--radius-full);
       color: var(--color-accent-soft);
     }
-    .cta-phone b { display: block; font-size: var(--fs-text-l); font-weight: 600; line-height: 1.3; white-space: nowrap; }
-    .cta-phone small { display: block; font-size: var(--fs-text-s); color: var(--color-text-on-dark-muted); }
+    .cta-phone-icon svg { width: 1.125rem; height: 1.125rem; }
+    .cta-phone b { display: block; font-size: var(--fs-text-m); font-weight: 600; line-height: 1.3; white-space: nowrap; }
+    .cta-phone small { display: block; font-size: var(--fs-label); line-height: 1.4; color: var(--color-text-on-dark-muted); }
     @media (min-width: 768px) {
-      .cta-actions { flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--gap-xxsmall); }
+      .cta-actions { flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--gap-xsmall); }
       .cta-actions .btn { width: auto; white-space: nowrap; }
+      /* two lines: «Оновіть ◯ свій дім» ≈ 9.3em is the widest; 10.3cqi keeps it inside the column */
+      .cta-title { font-size: min(var(--fs-h1), 10.3cqi); }
     }
     @media (min-width: 992px) {
       .cta-card { grid-template-columns: minmax(0, 40%) minmax(0, 1fr); gap: var(--gap-xlarge); padding: var(--gap-small); }
       .cta-photo { aspect-ratio: auto; min-height: 28rem; }
-      .cta-body { padding: var(--gap-small) 0; }
-      .cta-title { font-size: min(var(--fs-h1), 6.5vw); }
+      /* right padding gives the phone block breathing room from the card edge */
+      .cta-body { padding: var(--gap-small) var(--gap-medium) var(--gap-small) 0; }
       .cta-actions { margin-top: auto; }
     }
 
@@ -2407,20 +2422,22 @@
         <div class="cta-card on-dark" data-reveal>
           <div class="grain" aria-hidden="true"></div>
           <div class="media cta-photo">
-            <img src="assets/images/cta-1.jpg" width="1672" height="941" loading="lazy" decoding="async"
-                 alt="Майстер валиком фарбує стіну в теплий білий колір">
+            <img src="assets/images/cta-main-renovation.webp" width="1471" height="1069" loading="lazy" decoding="async"
+                 alt="Майстер шурупокрутом кріпить металевий кронштейн до стіни">
           </div>
           <div class="cta-body">
             <h2 class="cta-title" id="cta-title">
-              <span class="cta-line">Оновіть<span class="pill pill-parquet" aria-hidden="true"><img src="assets/images/cta-2.jpg" width="1672" height="941" loading="lazy" decoding="async" alt=""></span></span>
-              <span class="cta-line"><span class="pill pill-faucet pill-lead" aria-hidden="true"><img src="assets/images/cta-3.jpg" width="1671" height="941" loading="lazy" decoding="async" alt=""></span>свій дім</span>
-              <span class="cta-line hl">без стресу<span class="pill pill-roller" aria-hidden="true"><img src="assets/images/cta-1.jpg" width="1672" height="941" loading="lazy" decoding="async" alt=""></span></span>
+              <span class="cta-line cta-line-1"><span class="cta-chunk">Оновіть<span class="pill pill-craft" aria-hidden="true"><img src="assets/images/cta-detail-craftsmanship.webp" width="640" height="427" loading="lazy" decoding="async" alt=""></span></span> <span class="cta-chunk">свій дім</span></span>
+              <span class="cta-line hl"><span class="pill pill-interior pill-lead" aria-hidden="true"><img src="assets/images/cta-detail-interior.webp" width="640" height="427" loading="lazy" decoding="async" alt=""></span>без стресу</span>
             </h2>
             <p class="t-text-m cta-text">Перетворіть свій простір завдяки професійному ремонту, сучасному дизайну й бездоганній якості.</p>
             <div class="cta-actions">
-              <a class="btn btn-primary" href="#contact">
+              <a class="btn btn-swap btn-primary" href="#contact">
                 Отримати безкоштовний розрахунок
-                <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+                <span class="btn-arrow" aria-hidden="true">
+                  <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                  <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                </span>
               </a>
               <a class="cta-phone" href="tel:+380480000000">
                 <span class="cta-phone-icon" aria-hidden="true"><svg width="22" height="22"><use href="#i-phone"/></svg></span>
