@@ -1238,15 +1238,25 @@
       gap: var(--gap-small);
       padding: var(--gap-xxsmall);
       border-radius: var(--radius-large);
-      /* Restrained dark gradient (user-approved exception to TZ §3.1): deep green top-left → near-black
-         bottom-right, plus one very soft wash of the accent — no bright spots or glow. */
+      /* Restrained dark gradient (user-approved exception to TZ §3.1): rich forest green top-left
+         flowing into deep near-black green bottom-right. Saturated green stops only (no grey-green),
+         plus one very soft wash of the accent — no bright spots or glow. */
       background:
-        radial-gradient(90% 120% at 0% 0%, rgba(30, 107, 82, .16), transparent 60%),
-        linear-gradient(135deg, #1A2C24 0%, var(--color-dark) 45%, #0A110E 100%);
+        radial-gradient(80% 110% at 0% 0%, rgba(30, 107, 82, .22), transparent 65%),
+        linear-gradient(135deg, #154634 0%, #0F3628 30%, #0A2419 62%, #051209 100%);
       color: var(--color-text-on-dark);
       overflow: clip;
     }
-    .cta-card > .grain { z-index: -1; }
+    .cta-card > .grain { z-index: -1; opacity: .05; } /* lighter grain keeps the green clean, not dusty */
+    /* CTA button: warm off-white with dark green text/arrow. Same size and shape as .btn-primary;
+       hover is only the .btn-swap arrow glide — no fill change, shadow or glow. */
+    .cta-actions .btn-cream,
+    .cta-actions .btn-cream:hover,
+    .cta-actions .btn-cream:active {
+      background: #F0EDE5;
+      color: var(--color-dark);
+      box-shadow: none;
+    }
     .cta-photo { border-radius: var(--radius-medium); aspect-ratio: 16 / 10; }
     .cta-photo img { object-position: 45% 35%; }
     .cta-body {
@@ -2448,7 +2458,7 @@
             </h2>
             <p class="t-text-m cta-text">Перетворіть свій простір завдяки професійному ремонту, сучасному дизайну й бездоганній якості.</p>
             <div class="cta-actions">
-              <a class="btn btn-swap btn-primary" href="#contact">
+              <a class="btn btn-swap btn-primary btn-cream" href="#contact">
                 Отримати безкоштовний розрахунок
                 <span class="btn-arrow" aria-hidden="true">
                   <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
