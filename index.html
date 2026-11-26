@@ -1321,7 +1321,7 @@
     }
 
     /* ============ Reviews (TZ §4.9) ============ */
-    .reviews-title { max-width: 16em; margin-inline: auto; text-align: center; }
+    .reviews-title { max-width: 16em; margin-inline: auto; text-align: center; text-transform: uppercase; text-wrap: balance; }
     .reviews-card {
       display: grid;
       gap: var(--gap-large);
@@ -1362,7 +1362,7 @@
       flex-direction: column;
       gap: var(--gap-xsmall);
       margin: 0;
-      transition: transform 600ms var(--ease), opacity 500ms var(--ease);
+      transition: transform 420ms var(--ease), opacity 350ms var(--ease);
     }
     .slide[data-pos="prev"] { opacity: 0; transform: translateX(-2.5rem); pointer-events: none; }
     .slide[data-pos="next"] { opacity: 0; transform: translateX(2.5rem); pointer-events: none; }
@@ -1433,7 +1433,13 @@
     /* ============ Consultation form (TZ §4.10) ============ */
     .contact-grid { display: grid; gap: var(--gap-xlarge); }
     .contact-intro { display: flex; flex-direction: column; gap: var(--gap-large); }
-    .contact-title { max-width: 18em; }
+    .contact-title { max-width: 18em; text-transform: uppercase; }
+    /* Desktop: exactly two lines. «Запишіться на безкоштовну» ≈ 13.2em is line one, so the size follows
+       the column (≈50px at 1440) and is capped at the H2 size; below 1200px it wraps naturally. */
+    @media (min-width: 1200px) {
+      .contact-intro { container-type: inline-size; }
+      .contact-title { max-width: none; font-size: min(var(--fs-h2), 7.5cqi); }
+    }
     .perks { display: flex; flex-direction: column; gap: var(--gap-small); }
     .perk { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); column-gap: var(--gap-xxsmall); align-items: start; }
     .perk-icon {
@@ -1493,7 +1499,7 @@
       animation: spin 700ms linear infinite;
     }
     .form-submit.is-loading .spinner { display: inline-block; }
-    .form-submit.is-loading .btn-icon { display: none; }
+    .form-submit.is-loading .btn-arrow { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .form-status {
       display: flex;
@@ -2575,10 +2581,13 @@
                 <p class="field-error" id="f-message-error"></p>
               </div>
             <div class="form-actions">
-              <button class="btn btn-primary form-submit" type="submit" data-submit>
+              <button class="btn btn-swap btn-primary form-submit" type="submit" data-submit>
                 <span>Отримати розрахунок</span>
                 <span class="spinner" aria-hidden="true"></span>
-                <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+                <span class="btn-arrow" aria-hidden="true">
+                  <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                  <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+                </span>
               </button>
               <div class="form-status" role="status" aria-live="polite" hidden data-status>
                 <svg width="22" height="22" aria-hidden="true"><use href="#i-check"/></svg>
@@ -3066,7 +3075,7 @@
         });
       }
 
-      /* ---- Reviews slider: arrows, dots, swipe, keyboard, 7s autoplay ---- */
+      /* ---- Reviews slider: arrows, dots, swipe, keyboard, 3.5s autoplay ---- */
       const slider = document.querySelector('[data-slider]');
       if (slider) {
         const track = slider.querySelector('[data-slides]');
@@ -3119,13 +3128,24 @@
         });
         track.addEventListener('pointercancel', () => { startX = null; });
 
-        // autoplay every 7s; paused on hover / focus; off with reduced motion
-        const stop = () => { clearInterval(timer); timer = null; };
-        const start = () => { if (!reduced && !timer) timer = setInterval(() => { track.setAttribute('aria-live', 'off'); go(index + 1, 1); }, 7000); };
+        // autoplay every 3.5s; paused on hover / focus / touch; off with reduced motion
+        const AUTOPLAY_MS = 3500;
+        let resume = null;
+        const stop = () => { clearInterval(timer); timer = null; clearTimeout(resume); };
+        const start = () => { if (!reduced && !timer) timer = setInterval(() => { track.setAttribute('aria-live', 'off'); go(index + 1, 1); }, AUTOPLAY_MS); };
         slider.addEventListener('mouseenter', stop);
         slider.addEventListener('mouseleave', () => { if (!slider.contains(document.activeElement)) start(); });
         slider.addEventListener('focusin', stop);
         slider.addEventListener('focusout', (e) => { if (!slider.contains(e.relatedTarget) && !slider.matches(':hover')) start(); });
+        // touch has no hover: pause while the finger is down, resume after a short idle
+        slider.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') stop(); });
+        const touchEnd = (e) => {
+          if (e.pointerType === 'mouse') return;
+          clearTimeout(resume);
+          resume = setTimeout(() => { if (!slider.contains(document.activeElement)) start(); }, AUTOPLAY_MS * 2);
+        };
+        slider.addEventListener('pointerup', touchEnd);
+        slider.addEventListener('pointercancel', touchEnd);
 
         sync();
         start();
