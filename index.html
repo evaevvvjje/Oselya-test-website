@@ -1533,7 +1533,7 @@
     }
 
     /* ============ Team (TZ §4.11) — three static cards, motion on hover only ============ */
-    .team-title { max-width: 22em; margin-inline: auto; text-align: center; }
+    .team-title { max-width: 22em; margin-inline: auto; text-align: center; text-transform: uppercase; }
     .team-grid {
       display: grid;
       grid-template-columns: minmax(0, 20rem);
@@ -1559,24 +1559,35 @@
     .team-role { margin-top: 0.25rem; color: var(--color-text-muted); }
     /* only real pointers, only when motion is welcome */
     @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-      .team-card,
-      .team-photo img,
+      /* the card stays still; only the photo zooms gently inside its clipped frame (.media) */
+      .team-photo img { transition: transform 700ms var(--ease); }
       .team-name::after { transition: transform 350ms var(--ease); }
-      .team-card:hover { transform: translateY(-8px); }
       .team-card:hover .team-photo img { transform: scale(1.05); }
       .team-card:hover .team-name::after { transform: scaleX(1); }
     }
 
     /* ============ FAQ (TZ §4.12) ============ */
     .faq-grid { display: grid; gap: var(--gap-large); }
-    .faq-title { max-width: 16em; }
+    .faq-title { max-width: 16em; text-transform: uppercase; }
     .faq-list { display: flex; flex-direction: column; gap: var(--gap-xxsmall); }
     .faq-item {
+      position: relative;
       border: 1px solid var(--color-border);
       border-radius: var(--radius-small);
       background: var(--color-surface);
     }
-    .faq-item.is-open { box-shadow: var(--shadow-elevated); }
+    /* Active item: thin green outline (over the grey border) + the existing elevated shadow,
+       both on one layer that fades in/out by opacity only — no layout change */
+    .faq-item::after {
+      content: "";
+      position: absolute; inset: -1px;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px var(--color-accent), var(--shadow-elevated);
+      opacity: 0;
+      transition: opacity 400ms var(--ease);
+      pointer-events: none;
+    }
+    .faq-item.is-open::after { opacity: 1; }
     .faq-q { margin: 0; }
     .faq-btn {
       position: relative;
@@ -1614,13 +1625,19 @@
     .faq-icon::after { transform: rotate(90deg); }
     .faq-item.is-open .faq-icon::after { transform: rotate(0deg); opacity: 0; }
     /* panel: grid-template-rows 0fr -> 1fr + opacity (the one allowed exception, TZ §2.4) */
+    /* closing: the text fades out quickly while the height folds away */
     .faq-panel {
       display: grid;
       grid-template-rows: 0fr;
       opacity: 0;
-      transition: grid-template-rows 300ms var(--ease), opacity 300ms var(--ease);
+      transition: grid-template-rows 450ms var(--ease), opacity 200ms var(--ease);
     }
-    .faq-item.is-open .faq-panel { grid-template-rows: 1fr; opacity: 1; }
+    /* opening: the height unfolds first, the text fades in just behind it */
+    .faq-item.is-open .faq-panel {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      transition: grid-template-rows 450ms var(--ease), opacity 350ms var(--ease) 120ms;
+    }
     .faq-panel > div { overflow: hidden; }
     .faq-panel p { padding: 0 var(--gap-xsmall) var(--gap-xsmall); color: var(--color-text-muted); }
     @media (min-width: 992px) {
