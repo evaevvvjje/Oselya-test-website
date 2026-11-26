@@ -1651,7 +1651,7 @@
     }
 
     /* ============ Blog (TZ §4.13) ============ */
-    .blog-title { max-width: 16em; margin-inline: auto; text-align: center; }
+    .blog-title { max-width: 16em; margin-inline: auto; text-align: center; text-transform: uppercase; }
     .blog-grid { display: grid; gap: var(--gap-large); margin-top: var(--gap-xlarge); }
     .blog-card {
       display: flex;
@@ -1663,22 +1663,34 @@
     .blog-card:active { transform: scale(.99); }
     .blog-card:focus-visible { outline-offset: 8px; }
     .blog-media { border-radius: var(--radius-medium); aspect-ratio: 4 / 3; }
+    /* subtle cinematic dim: an even 12% black wash under the shared bottom gradient */
+    .blog-media::after {
+      background:
+        linear-gradient(to top, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 45%),
+        rgba(0, 0, 0, .12);
+    }
     .blog-media img { transition: transform 500ms var(--ease); }
     .blog-card:hover .blog-media img,
     .blog-card:focus-visible .blog-media img { transform: scale(1.04); }
+    /* category label: compact ivory chip, dark green text, hairline green border; the light blur
+       keeps it legible on busy photos */
     .badge {
-      position: absolute; left: var(--gap-xxsmall); top: var(--gap-xxsmall); z-index: 2;
-      padding: 0.375rem 0.875rem;
-      border-radius: var(--radius-full);
-      background: var(--color-accent-soft);
+      position: absolute; left: 0.875rem; top: 0.875rem; z-index: 2;
+      padding: 0.375rem 0.75rem;
+      border: 1px solid rgba(30, 107, 82, .22);
+      border-radius: 0.375rem;
+      background: rgba(255, 255, 255, .88);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
       color: var(--color-accent);
-      font-size: var(--fs-label);
-      font-weight: 500;
-      line-height: 1.4;
-      letter-spacing: 0.04em;
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
     }
-    .blog-name { position: relative; align-self: flex-start; padding-bottom: 0.25rem; }
+    /* titles: a moderate measure + balance so a short title still breaks into two even lines */
+    .blog-name { position: relative; align-self: flex-start; max-width: 15em; padding-bottom: 0.25rem; text-wrap: balance; }
     .blog-name::after {
       content: "";
       position: absolute; left: 0; right: 0; bottom: 0;
@@ -1704,81 +1716,38 @@
       .blog-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap-small); }
     }
 
-    /* ============ Video block (TZ §4.14) ============ */
-    .video-section {
-      position: relative;
-      isolation: isolate;
-      padding-top: var(--section-pad);
-      background: var(--color-dark);
-    }
-    .video-section > .grain { z-index: -1; }
-    .video-frame {
-      position: relative;
-      overflow: hidden;
-      isolation: isolate;
-      aspect-ratio: 16 / 10;
-      border-radius: var(--radius-medium);
-      background: var(--color-dark);
-    }
-    .video-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    /* dimming: from-black/60 at the bottom + a brand tint */
-    .video-frame::before,
-    .video-frame::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; }
-    .video-frame::before { background: var(--color-dark); mix-blend-mode: multiply; opacity: .35; }
-    .video-frame::after { background: linear-gradient(to top, rgba(0,0,0,.6) 0%, rgba(0,0,0,.15) 55%, rgba(0,0,0,0) 100%); }
-    .video-toggle {
-      position: absolute;
-      right: var(--gap-xxsmall); bottom: var(--gap-xxsmall);
-      z-index: 2;
-      display: grid;
-      place-items: center;
-      width: 3.5rem; height: 3.5rem;
-      border-radius: var(--radius-full);
-      background: var(--color-dark);
-      color: var(--color-text-on-dark);
-      box-shadow: 0 0 0 1px var(--color-border-on-dark), var(--shadow-floating);
-      transition: transform var(--dur-hover) var(--ease);
-    }
-    .video-toggle[hidden] { display: none; }
-    .video-toggle::before {
-      content: ""; position: absolute; inset: 0; border-radius: inherit;
-      background: var(--color-accent); opacity: 0;
-      transition: opacity var(--dur-hover) var(--ease);
-    }
-    .video-toggle svg { position: relative; }
-    .video-toggle:hover { transform: scale(1.06); }
-    .video-toggle:hover::before { opacity: 1; }
-    .video-toggle:active { transform: scale(.94); }
-    .video-toggle .i-play-ico { display: none; }
-    .video-toggle.is-paused .i-play-ico { display: block; }
-    .video-toggle.is-paused .i-pause-ico { display: none; }
-    @media (min-width: 768px) {
-      .video-frame { aspect-ratio: 21 / 9; border-radius: var(--radius-large); }
-      .video-toggle { right: var(--gap-small); bottom: var(--gap-small); width: 4rem; height: 4rem; }
-    }
-
     /* ============ Footer (TZ §4.15) ============ */
+    /* Composition after the reference: photo left, three link columns right, divider + legal row,
+       then a huge low-contrast «ОСЕЛЯ» wordmark cropped by the bottom edge. */
     .site-footer {
       position: relative;
       isolation: isolate;
-      padding-block: var(--section-pad) var(--gap-small);
-      background: var(--color-dark);
+      overflow: hidden;
+      padding-top: var(--section-pad);
+      /* restrained deep-green → near-black gradient, same family as the CTA card */
+      background:
+        radial-gradient(70% 90% at 0% 0%, rgba(30, 107, 82, .18), transparent 60%),
+        radial-gradient(60% 80% at 100% 100%, rgba(30, 107, 82, .10), transparent 60%),
+        linear-gradient(160deg, #1A2C24 0%, var(--color-dark) 45%, #0A110E 100%);
       color: var(--color-text-on-dark);
     }
     .site-footer > .grain { z-index: -1; }
-    .footer-top { display: grid; gap: var(--gap-large); }
-    .footer-brand .logo { color: var(--color-text-on-dark); }
+    .footer-top { display: grid; gap: var(--gap-xlarge); }
+    .footer-media { aspect-ratio: 16 / 10; border-radius: var(--radius-medium); }
+    .footer-media img { object-position: 50% 55%; }
     .footer-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-large) var(--gap-xsmall); }
     .footer-col-contacts { grid-column: 1 / -1; }
     .footer-nowrap { white-space: nowrap; }
     .footer-heading {
       font-family: var(--font-display);
-      font-size: var(--fs-h6);
+      font-size: var(--fs-label);
       font-weight: 500;
       line-height: 1.25;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--color-text-on-dark-muted);
     }
-    .footer-list { display: flex; flex-direction: column; gap: var(--gap-xxsmall); margin-top: var(--gap-xsmall); }
+    .footer-list { display: flex; flex-direction: column; gap: 0.875rem; margin-top: var(--gap-xsmall); }
     .footer-link {
       position: relative;
       display: inline-flex;
@@ -1788,9 +1757,9 @@
       font-size: var(--fs-text-m);
       line-height: 1.5;
       border-radius: 0.25rem;
-      transition: transform var(--dur-hover) var(--ease);
+      transition: transform var(--dur-hover) var(--ease), opacity var(--dur-hover) var(--ease);
     }
-    .footer-link svg { margin-top: 0.1875rem; color: var(--color-accent-soft); }
+    .footer-link svg { flex: none; margin-top: 0.1875rem; color: var(--color-accent-soft); }
     .footer-link::after {
       content: "";
       position: absolute; left: 0; right: 0; bottom: 0;
@@ -1802,8 +1771,8 @@
     }
     .footer-link:hover::after { transform: scaleX(1); transform-origin: left; }
     .footer-link:active { transform: translateY(1px); }
-    .footer-address { font-style: normal; display: inline-flex; gap: 0.5rem; font-size: var(--fs-text-m); color: var(--color-text-on-dark); }
-    .footer-address svg { margin-top: 0.1875rem; color: var(--color-accent-soft); }
+    .footer-address { font-style: normal; display: inline-flex; gap: 0.5rem; font-size: var(--fs-text-m); line-height: 1.5; color: var(--color-text-on-dark); }
+    .footer-address svg { flex: none; margin-top: 0.1875rem; color: var(--color-accent-soft); }
     .footer-bottom {
       display: flex;
       flex-direction: column;
@@ -1812,17 +1781,41 @@
       padding-top: var(--gap-small);
       border-top: 1px solid var(--color-border-on-dark);
       color: var(--color-text-on-dark-muted);
+      font-size: var(--fs-text-s);
     }
     .footer-legal { display: flex; flex-wrap: wrap; gap: var(--gap-xxsmall) var(--gap-small); }
     .footer-legal .footer-link { font-size: var(--fs-text-s); color: var(--color-text-on-dark); }
+    /* Wordmark: spans the container (Oswald 600 caps «ОСЕЛЯ» ≈ 2.75em wide → 1 / 2.75 ≈ 0.36),
+       very low contrast, the lower part cropped by the footer edge */
+    .footer-word {
+      display: block;
+      margin-top: var(--gap-small);
+      margin-bottom: -0.2em;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: calc((min(100vw, var(--container-max)) - 2 * var(--container-pad)) * 0.36);
+      line-height: .9;
+      letter-spacing: -0.01em;
+      text-align: center;
+      text-transform: uppercase;
+      white-space: nowrap;
+      user-select: none;
+      pointer-events: none;
+      color: transparent;
+      background: linear-gradient(180deg, rgba(221, 235, 228, .09) 0%, rgba(221, 235, 228, .03) 70%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
     @media (min-width: 768px) {
       .footer-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .footer-col-contacts { grid-column: auto; }
       .footer-bottom { flex-direction: row; align-items: center; justify-content: space-between; }
+      .footer-media { aspect-ratio: 21 / 9; border-radius: var(--radius-large); }
     }
     @media (min-width: 992px) {
-      .footer-top { grid-template-columns: minmax(0, 1fr) minmax(0, 62%); gap: var(--gap-xxlarge); }
-      .footer-cols { gap: var(--gap-small); }
+      .footer-top { grid-template-columns: minmax(0, 34%) minmax(0, 1fr); gap: var(--gap-xxlarge); align-items: start; }
+      .footer-media { aspect-ratio: 16 / 10; border-radius: var(--radius-medium); }
+      .footer-cols { gap: var(--gap-small); padding-left: var(--gap-large); }
     }
 
     /* ============ Legal modal ============ */
@@ -2722,7 +2715,7 @@
           <a class="blog-card" href="#contact" data-reveal>
             <div class="media blog-media">
               <span class="badge">Кухня</span>
-              <img src="assets/images/blog-1.jpg" width="1536" height="1024" loading="lazy" decoding="async" alt="Кухня з індукційною панеллю, дерев’яною дошкою та свіжою зеленню">
+              <img src="assets/images/blog-kitchen-trends.webp" width="1200" height="800" loading="lazy" decoding="async" alt="Майстер укладає велику сіру плитку на підлогу у світлому приміщенні з цегляною стіною">
             </div>
             <h3 class="t-h5 blog-name">Тренди дизайну кухні, які полегшують готування</h3>
             <ul class="blog-meta">
@@ -2733,51 +2726,38 @@
           <a class="blog-card" href="#contact" data-reveal data-reveal-i="1">
             <div class="media blog-media">
               <span class="badge">Бюджет</span>
-              <img src="assets/images/blog-2.jpg" width="1536" height="1024" loading="lazy" decoding="async" alt="Стильна вітальня з пофарбованою стіною, дубовою консоллю та великою рослиною">
+              <img src="assets/images/blog-budget-renovation.webp" width="1200" height="800" loading="lazy" decoding="async" alt="Двоє майстрів у робочих комбінезонах обговорюють план ремонту">
             </div>
             <h3 class="t-h5 blog-name">Бюджетні ідеї ремонту, що виглядають дорого</h3>
             <ul class="blog-meta">
               <li><time datetime="2026-11-12">12 листопада 2026</time></li>
-              <li>Марія Коваль</li>
+              <li>Олена Мельник</li>
             </ul>
           </a>
           <a class="blog-card" href="#contact" data-reveal data-reveal-i="2">
             <div class="media blog-media">
               <span class="badge">Інтерʼєр</span>
-              <img src="assets/images/blog-3.jpg" width="1536" height="1024" loading="lazy" decoding="async" alt="Коридор із новим латунним бра, свіжою фарбою та дубовою лавою">
+              <img src="assets/images/blog-interior-makeover.webp" width="1200" height="800" loading="lazy" decoding="async" alt="Майстри фарбують стіни у світлій вітальні з великими вікнами">
             </div>
             <h3 class="t-h5 blog-name">Прості оновлення, які змінять ваш дім</h3>
             <ul class="blog-meta">
               <li><time datetime="2026-11-05">5 листопада 2026</time></li>
-              <li>Марія Коваль</li>
+              <li>Андрій Бондар</li>
             </ul>
           </a>
         </div>
         <div class="blog-more" data-reveal>
-          <a class="btn btn-primary" href="#contact">
+          <a class="btn btn-swap btn-primary" href="#contact">
             Більше статей
-            <svg class="btn-icon" width="20" height="20" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+            <span class="btn-arrow" aria-hidden="true">
+              <svg class="btn-icon" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+              <svg class="btn-icon btn-icon-next" width="20" height="20"><use href="#i-arrow-up-right"/></svg>
+            </span>
           </a>
         </div>
       </div>
     </section>
 
-    <!-- ============ Video block ============ -->
-    <section class="video-section" id="video" aria-label="Відео з робіт">
-      <div class="grain" aria-hidden="true"></div>
-      <div class="container-site">
-        <div class="video-frame" data-reveal>
-          <video autoplay muted loop playsinline preload="metadata" poster="assets/images/video-poster.jpg"
-                 aria-label="Ремонт квартири: від робочого процесу до готового інтерʼєру" data-video>
-            <source src="assets/video/renovation-bg.mp4" type="video/mp4">
-          </video>
-          <button class="video-toggle" type="button" aria-label="Поставити на паузу" hidden data-video-toggle>
-            <svg class="i-pause-ico" width="24" height="24" aria-hidden="true"><use href="#i-pause"/></svg>
-            <svg class="i-play-ico" width="24" height="24" aria-hidden="true"><use href="#i-play"/></svg>
-          </button>
-        </div>
-      </div>
-    </section>
   </main>
 
   <!-- ============ Footer ============ -->
@@ -2785,11 +2765,9 @@
     <div class="grain" aria-hidden="true"></div>
     <div class="container-site">
       <div class="footer-top">
-        <div class="footer-brand">
-          <a class="logo" href="#hero" aria-label="Оселя — на головну">
-            <svg class="logo-mark" aria-hidden="true"><use href="#i-logo"/></svg>
-            <span>Оселя</span>
-          </a>
+        <div class="media footer-media">
+          <img src="assets/images/footer-renovation.webp" width="1400" height="788" loading="lazy" decoding="async"
+               alt="Кімната під час ремонту: ліворуч голі стіни й риштування, праворуч готовий інтерʼєр із зеленою стіною та паркетом">
         </div>
         <div class="footer-cols">
           <nav class="footer-col footer-col-contacts" aria-labelledby="ft-contacts">
@@ -2830,6 +2808,7 @@
           <button class="footer-link" type="button" aria-haspopup="dialog" data-modal-open="modal-privacy">Політика конфіденційності</button>
         </div>
       </div>
+      <span class="footer-word" aria-hidden="true">Оселя</span>
     </div>
   </footer>
 
@@ -2968,25 +2947,6 @@
         });
       });
 
-
-      /* ---- Video: poster only if the file is missing; no autoplay with reduced motion ---- */
-      const video = document.querySelector('[data-video]');
-      if (video) {
-        const toggle = document.querySelector('[data-video-toggle]');
-        const reducedVideo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const sync = () => {
-          const paused = video.paused;
-          toggle.classList.toggle('is-paused', paused);
-          toggle.setAttribute('aria-label', paused ? 'Відтворити' : 'Поставити на паузу');
-        };
-        if (reducedVideo) { video.removeAttribute('autoplay'); video.autoplay = false; video.pause(); }
-        // the button appears only once the video can actually play
-        video.addEventListener('loadeddata', () => { toggle.hidden = false; sync(); });
-        video.addEventListener('play', sync);
-        video.addEventListener('pause', sync);
-        video.querySelector('source').addEventListener('error', () => { toggle.hidden = true; });
-        toggle.addEventListener('click', () => { if (video.paused) video.play(); else video.pause(); });
-      }
 
       /* ---- Legal modals: X, Esc, click outside; focus trapped and returned ---- */
       document.querySelectorAll('[data-modal-open]').forEach((opener) => {
